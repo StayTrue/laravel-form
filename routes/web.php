@@ -10,7 +10,12 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::post('make-order', function(Request $request) {
+	echo $request->name;
 });
