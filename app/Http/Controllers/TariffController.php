@@ -11,7 +11,7 @@ class TariffController extends Controller
         $tariff = Tariff::findOrFail($request->id);
         $delivery_days = explode(',' , $tariff->delivery_days);
         foreach ($delivery_days as $key => $day) {
-        	$days_array[$key]['id'] = $day;
+        	$days_array[$key]['id'] = (int)$day;
         	$days_array[$key]['weekday'] = get_weekday($day);
         }
         return json_encode($days_array);

@@ -11,7 +11,7 @@
         		    	<b-form-input v-model = "phone" v-mask="'+7(###)###-##-##'" type="text" required id="phone" placeholder="+7("></b-form-input>
         		  	</b-form-group>
         		  	<b-form-group label = "Тариф">
-        			    <b-form-select v-model = "tariff_id" required :value = "null" @input = "daysUpdate" id="exampleFormControlSelect1">
+        			    <b-form-select v-model = "tariff_id" :disabled = "isPending" required :value = "null" @input = "daysUpdate" id="exampleFormControlSelect1">
                             <option v-for = "tariff in tariffs" :value = "tariff.id">{{ tariff.name }}</option>
                             <option slot = "first" :value = "null">Выберите тариф</option>
         			    </b-form-select>
@@ -23,9 +23,9 @@
                         </b-form-select>
                     </b-form-group>
                     <b-form-group id = "addressGroup" label = "Адрес доставки" label-for = "address">
-                        <b-form-input v-model = "address" type = "text" required id = "address" placeholder = "Введите адрес доставки"></b-form-input>
+                        <b-form-input v-model = "address" type = "text" id = "address" placeholder = "Введите адрес доставки"></b-form-input>
                     </b-form-group>
-        		  	<b-button type="submit" variant="primary">Сделать заказ</b-button>
+        		  	<b-button type="submit" variant="primary" v-if="!$v.$invalid">Сделать заказ</b-button>
         		</b-form>
         		<modal ref = "myModalRef"></modal>
             </b-card>
@@ -83,6 +83,9 @@
     			axios.post('make-order', {
     				name: this.name, 
     				phone: this.phone,
+                    address: this.address,
+                    tariff_id: this.tariff_id,
+                    day: this.chosen_day
     			}).then((response) => {
     				this.$refs.myModalRef.showModal();
                     this.$refs.myModalRef.title = "Ваш заказ оформлен";
@@ -106,8 +109,10 @@
     		}
     	},
         mounted() {
+            this.isPending = true;
             axios.get('get-tariffs').then((response) => {
                 this.tariffs = response.data;
+                this.isPending = false;
             });
         }
     }

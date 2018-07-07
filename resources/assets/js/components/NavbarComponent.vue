@@ -4,8 +4,8 @@
         <b-navbar-brand href="/">ReqestFood</b-navbar-brand>
         <b-collapse is-nav id="nav_collapse">
             <b-navbar-nav>
-                <b-nav-item href="#">Link</b-nav-item>
-                <b-nav-item href="#" disabled>Disabled</b-nav-item>
+                <b-nav-item href="#">Заказы</b-nav-item>
+                <b-nav-item href="#">Клиенты</b-nav-item>
             </b-navbar-nav>
         </b-collapse>
     </b-navbar>
