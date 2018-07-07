@@ -15,6 +15,8 @@ class CreateTariffsTable extends Migration
     {
         Schema::create('tariffs', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name');
+            $table->string('delivery_days');
             $table->timestamps();
         });
     }

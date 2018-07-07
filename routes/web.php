@@ -19,3 +19,9 @@ Route::get('/', function () {
 Route::post('make-order', function(Request $request) {
 	echo $request->name;
 });
+
+Route::get('update-delivery-days', function () {
+    $answer['days'][0]['id'] = 1;
+    $answer['days'][0]['name'] = 'Monday';
+    return json_encode($answer);
+});
