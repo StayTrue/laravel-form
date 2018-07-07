@@ -25,3 +25,6 @@ Route::get('update-delivery-days', function () {
     $answer['days'][0]['name'] = 'Monday';
     return json_encode($answer);
 });
+
+Route::get('get-tariffs', 'TariffController@list');
+Route::post('get-delivery-days', 'TariffController@list_days');

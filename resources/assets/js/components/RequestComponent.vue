@@ -1,38 +1,44 @@
-<template>
-	<div>
-		<form v-on:submit.prevent="onSubmit">
-			<div class="form-group">
-			    <label for="name">Имя</label>
-			    <input v-model = "name" type="text" required class="form-control" id="name" placeholder="Введите ваше имя">
-			</div>
-		  	<div class="form-group">
-		    	<label for="exampleInputPassword1">Телефон</label>
-		    	<input v-model = "phone" v-mask="'+#(###)###-##-##'" type="text" class="form-control" id="phone" placeholder="Введите ваш телефон">
-		  	</div>
-		  	<div class="form-group">
-			    <label for="exampleFormControlSelect1">Выберите удобный тариф</label>
-			    <select class="form-control" v-model = "tariff" @change = "daysUpdate" id="exampleFormControlSelect1">
-			      	<option value = "1">1</option>
-			      	<option value = "2">2</option>
-			      	<option value = "3">3</option>
-			    </select>
-			</div>
-            <div class = "form-group">
-                <label for="days">Выберите день доставки</label>
-                <select class = "form-control" v-model = "chosen_day">
-                    <option  v-for = "day in delivery_days" :value="day.id">{{ day.name }}</option>
-                </select>
-            </div>
-		  	<button type="submit" class="btn btn-primary">Submit</button>
-		</form>
-		<modal ref = "myModalRef"></modal>
-	</div>
+<template>  
+    <div class = "container request-container d-flex justify-content-center">
+        <div class = "col-12 col-md-10 col-lg-8 px-0">
+            <b-card title="Оформление заказа" img-src="https://growfood.pro/static/images/main2.c8959e0.jpg" img-alt="RequestFood" img-top tag="article" class="mb-2">
+        		<b-form v-on:submit.prevent="onSubmit">
+        			<b-form-group id = "nameGroup" label = "Имя" label-for = "name">
+        			    <b-form-input :state="!$v.name.$invalid" v-model = "name" type="text" required  id="name" placeholder="Введите ваше имя"></b-form-input>
+        			</b-form-group>
+        		  	<b-form-group>
+        		    	<label for="exampleInputPassword1">Телефон</label>
+        		    	<b-form-input v-model = "phone" v-mask="'+7(###)###-##-##'" type="text" required id="phone" placeholder="+7("></b-form-input>
+        		  	</b-form-group>
+        		  	<b-form-group label = "Тариф">
+        			    <b-form-select v-model = "tariff_id" required :value = "null" @input = "daysUpdate" id="exampleFormControlSelect1">
+                            <option v-for = "tariff in tariffs" :value = "tariff.id">{{ tariff.name }}</option>
+                            <option slot = "first" :value = "null">Выберите тариф</option>
+        			    </b-form-select>
+        			</b-form-group>
+                    <b-form-group label = "День доставки" v-if = "show">
+                        <b-form-select :value = "null" v-model = "chosen_day" :disabled = "isPending">
+                            <option v-for = "delivery_day in delivery_days" :value = "delivery_day.id">{{ delivery_day.weekday }}</option>
+                            <option slot = "first" :value = "null">Выберите день доставки</option>
+                        </b-form-select>
+                    </b-form-group>
+                    <b-form-group id = "addressGroup" label = "Адрес доставки" label-for = "address">
+                        <b-form-input v-model = "address" type = "text" required id = "address" placeholder = "Введите адрес доставки"></b-form-input>
+                    </b-form-group>
+        		  	<b-button type="submit" variant="primary">Сделать заказ</b-button>
+        		</b-form>
+        		<modal ref = "myModalRef"></modal>
+            </b-card>
+        </div>
+    </div>
 </template>
 
 <script>
-    import Modal from '../components/ModalComponent.vue';
-    import axios from 'axios';
-    import {mask} from 'vue-the-mask';
+    import Modal from '../components/ModalComponent.vue'
+    import axios from 'axios'
+    import {mask} from 'vue-the-mask'
+    import { validationMixin } from "vuelidate"
+    import { required, minLength, between } from 'vuelidate/lib/validators'
     export default {
     	directives: {mask},
     	components: {
@@ -42,11 +48,36 @@
     		return {
 	    		name: '',
 	    		phone: '',
-	    		tariff: '',
-	    		chosen_day: '',
-	    		delivery_days: []
+                tariffs: [],
+                tariff: {
+                    id: '',
+                    name: '',
+                    price: '',
+                },
+	    		tariff_id: null,
+	    		chosen_day: null,
+	    		delivery_days: [],
+                delivery_day: {
+                    id: '',
+                    weekday: '',
+                },
+                isPending: false,
+                address: '',
+                show: false
     		}
     	},
+        mixins: [
+            validationMixin
+        ],
+        validations: {
+            name: {
+                required,
+                minLength: minLength(4)
+            },
+            address: {
+                between: between(20, 50)
+            }
+        },
     	methods: {
     		onSubmit() {
     			axios.post('make-order', {
@@ -58,16 +89,32 @@
     			});
     		},
     		daysUpdate() {
-    			console.log(this.tariff);
-                axios.get('update-delivery-days').then((response) => {
-                    this.delivery_days = response.data.days;
-                    console.log(response.data);
-                });
+                this.show = true;
+                if (this.tariff_id) {
+                    this.isPending = true;
+                    const csrfToken = document.querySelector("meta[name=csrf-token]").content;
+                        axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
+                        axios.post('get-delivery-days', {id: this.tariff_id}).then((response) => {
+                        this.delivery_days = response.data;
+                        this.isPending = false;
+                    }).catch(function (error) {
+                        console.log(error);
+                    });;
+                } else {
+                    this.show = false;
+                }
     		}
     	},
         mounted() {
-            this.delivery_days = [{id :1 , name: 'blahblah'}];   
-            console.log('Component mounted.')
+            axios.get('get-tariffs').then((response) => {
+                this.tariffs = response.data;
+            });
         }
     }
 </script>
+<style>
+    .request-container {
+        margin-top: 50px;
+        margin-bottom: 100px;
+    }
+</style>
