@@ -66,10 +66,16 @@ npm install
 npm run dev
 ```
 
-8) Add this line to your hosts file
+8) Generate application key
+```shell
+php artisan key:generate
+```
+
+9) Add this line to your hosts file
 ```shell
 192.168.10.10 homestead.test
 ```
-9) Finally open http://homestead.test in your browser
+
+10) Finally open http://homestead.test in your browser
 
 
