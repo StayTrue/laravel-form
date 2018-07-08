@@ -36,6 +36,16 @@ php vendor/bin/homestead make
 ```shell
 vagrant up
 ```
+if you get error on step
+```shell
+Configuring and enabling network interfaces...
+```
+run this commands
+```shell
+vagrant ssh
+cd code 
+sudo apt-get install ifupdown
+```
 
 5) Log into vagrant ssh and go to project path by running
 ```shell
