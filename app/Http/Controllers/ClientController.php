@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Client;
 
 class ClientController extends Controller
 {
@@ -11,5 +12,20 @@ class ClientController extends Controller
         if (DB::table('clients')->where('phone', $client->phone)->first()) {
             
         }
+    }
+
+    public function list() {
+    	$clients = Client::all();
+    	foreach ($clients as $key => $client) {
+    		$answer[$key]['id'] = $client->id;
+    		$answer[$key]['name'] = $client->name;
+    		$answer[$key]['phone'] = $client->phone;
+    		$answer[$key]['requests'] = $client->requests->count();
+    	}
+    	return json_encode($answer);
+    }
+
+    public function browse() {
+    	return view('clients');
     }
 }

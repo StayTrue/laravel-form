@@ -1,10 +1,10 @@
 <template>
     <div>
-        <b-modal ref="myModalRef" hide-footer :title = "title">
+        <b-modal ref="myModalRef" size="lg" centered hide-footer :title = "title">
             <div class="d-block text-center" >
-                <h3>{{ title }}</h3>
+                <h3 v-html="text"></h3>
             </div>
-            <b-btn class="mt-3" variant="outline-danger" block @click="hideModal">Close Me</b-btn>
+            <b-btn class="mt-3" variant="outline-success" block @click="hideModal">Готово</b-btn>
         </b-modal>
     </div>
 </template>
@@ -13,7 +13,8 @@
 export default {
     data: function() {
         return {
-            title: ''
+            title: '',
+            text: ''
         }
     },
     methods: {

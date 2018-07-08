@@ -1,27 +1,28 @@
 <?php
+	//According to ISO-8601 (Carbon::dayOfWeek)
 	if (!function_exists('get_weekday')) {
 		function get_weekday($day) {
 			switch ($day) {
 				case 1:
-					return 'Понедельник';
+					return 'Воскресенье';
 					break;
 				case 2:
-					return 'Вторник';
+					return 'Понедельник';
 					break;				
 				case 3:
-					return 'Среда';
+					return 'Вторник';
 					break;
 				case 4:
-					return 'Четверг';
+					return 'Среда';
 					break;
 				case 5:
-					return 'Пятница';
+					return 'Четверг';
 					break;
 				case 6:
-					return 'Суббота';
+					return 'Пятница';
 					break;
 				case 7:
-					return 'Воскресенье';
+					return 'Суббота';
 					break;				
 				default:
 					return 'Ошибка. Проверьте код!';

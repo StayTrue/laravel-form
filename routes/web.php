@@ -16,9 +16,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('make-order', function(Request $request) {
-	echo $request->name;
-});
+Route::post('make-order', 'RequestController@new');
 
 Route::get('update-delivery-days', function () {
     $answer['days'][0]['id'] = 1;
@@ -28,3 +26,7 @@ Route::get('update-delivery-days', function () {
 
 Route::get('get-tariffs', 'TariffController@list');
 Route::post('get-delivery-days', 'TariffController@list_days');
+Route::get('get-requests', 'RequestController@list');
+Route::get('requests', 'RequestController@browse');
+Route::get('get-clients', 'ClientController@list');
+Route::get('clients', 'ClientController@browse');

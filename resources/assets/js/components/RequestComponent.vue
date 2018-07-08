@@ -8,24 +8,24 @@
         			</b-form-group>
         		  	<b-form-group>
         		    	<label for="exampleInputPassword1">Телефон</label>
-        		    	<b-form-input v-model = "phone" v-mask="'+7(###)###-##-##'" type="text" required id="phone" placeholder="+7("></b-form-input>
+        		    	<b-form-input :state="!$v.phone.$invalid" v-model = "phone" v-mask="'+7(###)###-##-##'" type="text" required id="phone" placeholder="+7("></b-form-input>
         		  	</b-form-group>
         		  	<b-form-group label = "Тариф">
-        			    <b-form-select v-model = "tariff_id" :disabled = "isPending" required :value = "null" @input = "daysUpdate" id="exampleFormControlSelect1">
+        			    <b-form-select :state="!$v.tariff_id.$invalid" v-model = "tariff_id" :disabled = "isPending" required :value = "null" @input = "daysUpdate" id="exampleFormControlSelect1">
                             <option v-for = "tariff in tariffs" :value = "tariff.id">{{ tariff.name }}</option>
                             <option slot = "first" :value = "null">Выберите тариф</option>
         			    </b-form-select>
         			</b-form-group>
                     <b-form-group label = "День доставки" v-if = "show">
-                        <b-form-select :value = "null" v-model = "chosen_day" :disabled = "isPending">
+                        <b-form-select  :state="!$v.chosen_day.$invalid" :value = "null" v-model = "chosen_day" :disabled = "isPending">
                             <option v-for = "delivery_day in delivery_days" :value = "delivery_day.id">{{ delivery_day.weekday }}</option>
                             <option slot = "first" :value = "null">Выберите день доставки</option>
                         </b-form-select>
                     </b-form-group>
                     <b-form-group id = "addressGroup" label = "Адрес доставки" label-for = "address">
-                        <b-form-input v-model = "address" type = "text" id = "address" placeholder = "Введите адрес доставки"></b-form-input>
+                        <b-form-input :state = "!$v.address.$invalid" v-model = "address" type = "text" id = "address" placeholder = "Введите адрес доставки"></b-form-input>
                     </b-form-group>
-        		  	<b-button type="submit" variant="primary" v-if="!$v.$invalid">Сделать заказ</b-button>
+        		  	<b-button type="submit" variant="primary" :disabled="$v.$invalid">Сделать заказ</b-button>
         		</b-form>
         		<modal ref = "myModalRef"></modal>
             </b-card>
@@ -38,7 +38,7 @@
     import axios from 'axios'
     import {mask} from 'vue-the-mask'
     import { validationMixin } from "vuelidate"
-    import { required, minLength, between } from 'vuelidate/lib/validators'
+    import { required, minLength, maxLength, between, requiredIf, minValue} from 'vuelidate/lib/validators'
     export default {
     	directives: {mask},
     	components: {
@@ -70,12 +70,23 @@
             validationMixin
         ],
         validations: {
+            chosen_day: {
+                required
+            },
+            tariff_id: {
+                required
+            },
             name: {
                 required,
                 minLength: minLength(4)
             },
+            phone: {
+                required,
+                minLength: minLength(16)
+            },
             address: {
-                between: between(20, 50)
+                required,
+                minLength: minLength(15)
             }
         },
     	methods: {
@@ -88,8 +99,18 @@
                     day: this.chosen_day
     			}).then((response) => {
     				this.$refs.myModalRef.showModal();
-                    this.$refs.myModalRef.title = "Ваш заказ оформлен";
-    			});
+                    this.$refs.myModalRef.title = "Cпасибо";
+                    this.$refs.myModalRef.text = "Ваш заказ оформлен.<br>Мы свяжемся с вами в ближайшее время";
+    			}).catch((response) => {
+                    this.$refs.myModalRef.showModal();
+                    this.$refs.myModalRef.title = "Простите";
+                    this.$refs.myModalRef.text = "Что-то пошло не так...<br>Повторите ваш заказ позже";
+                });
+                this.name = ''
+                this.phone = ''
+                this.tariff_id = null
+                this.chosen_day = null
+                this.address = null
     		},
     		daysUpdate() {
                 this.show = true;
@@ -102,7 +123,7 @@
                         this.isPending = false;
                     }).catch(function (error) {
                         console.log(error);
-                    });;
+                    });
                 } else {
                     this.show = false;
                 }
