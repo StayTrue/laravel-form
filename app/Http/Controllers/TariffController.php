@@ -14,11 +14,11 @@ class TariffController extends Controller
         	$days_array[$key]['id'] = (int)$day;
         	$days_array[$key]['weekday'] = get_weekday($day);
         }
-        return json_encode($days_array);
+        return response()->json($days_array, 200);
     }
 
     public function list() {
     	$tariffs = Tariff::all();
-    	return json_encode($tariffs);
+    	return response()->json($tariffs, 200);;
     }
 }

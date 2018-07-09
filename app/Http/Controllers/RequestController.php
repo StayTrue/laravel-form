@@ -25,7 +25,7 @@ class RequestController extends Controller
         $request_item->address = $request->address;
         $request_item->day = $request->day;
         $request_item->save();
-        return $request_item;
+        return response()->json($request_item, 201);
     }
 
     public function list() {
@@ -39,7 +39,7 @@ class RequestController extends Controller
     		$answer[$key]['price'] = $request->tariff->price;
     		$answer[$key]['address'] = $request->address;
     	}
-    	return json_encode($answer);
+    	return response()->json($answer, 200);
     }
 
     public function browse() {

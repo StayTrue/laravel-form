@@ -22,7 +22,7 @@ class ClientController extends Controller
     		$answer[$key]['phone'] = $client->phone;
     		$answer[$key]['requests'] = $client->requests->count();
     	}
-    	return json_encode($answer);
+    	return response()->json($answer, 200);
     }
 
     public function browse() {
