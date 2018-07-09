@@ -1,4 +1,4 @@
-## Laravel newsfeed
+## Laravel request 
 
 <p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
@@ -36,6 +36,16 @@ php vendor/bin/homestead make
 ```shell
 vagrant up
 ```
+if you get error on step
+```shell
+Configuring and enabling network interfaces...
+```
+run this commands
+```shell
+vagrant ssh
+cd code 
+sudo apt-get install ifupdown
+```
 
 5) Log into vagrant ssh and go to project path by running
 ```shell
@@ -56,10 +66,16 @@ npm install
 npm run dev
 ```
 
-8) Add this line to your hosts file
+8) Generate application key
+```shell
+php artisan key:generate
+```
+
+9) Add this line to your hosts file
 ```shell
 192.168.10.10 homestead.test
 ```
-9) Finally open http://homestead.test in your browser
+
+10) Finally open http://homestead.test in your browser
 
 
